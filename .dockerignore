@@ -1,0 +1,17 @@
+# 构建产物与依赖：由镜像内部重新生成，不需要从宿主机带进去
+node_modules
+dist
+
+# 运行时数据与数据库文件，绝不能进镜像
+data
+*.db
+*.db-shm
+*.db-wal
+
+# 版本控制与本地配置
+.git
+.gitignore
+.gitattributes
+.env
+*.log
+.DS_Store

@@ -1,0 +1,44 @@
+# 本地 / 单机部署。用法：
+#   cp .env.example .env   # 填好 TOKEN_SECRET
+#   docker compose up -d --build
+#   curl http://localhost:3000/api/health
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: general-register-miniapp:latest
+    container_name: general-register-miniapp
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      # 必填且不设默认值：compose 会在缺失时直接报错，而不是让容器起来后才崩。
+      TOKEN_SECRET: ${TOKEN_SECRET:?请先在 .env 中设置 TOKEN_SECRET}
+      PUBLIC_BASE_URL: ${PUBLIC_BASE_URL:-http://localhost:3000}
+
+      # 微信小程序凭据：不填则二维码降级为开发预览码，生产环境下二维码接口
+      # 会返回 503（这是刻意的，避免发出一个扫不开的码）。
+      WX_APPID: ${WX_APPID:-}
+      WX_APPSECRET: ${WX_APPSECRET:-}
+      WX_ENV_VERSION: ${WX_ENV_VERSION:-release}
+
+      PREVIEW_TOKEN: ${PREVIEW_TOKEN:-}
+    volumes:
+      # SQLite 需要持久化；容器重建后报名数据不能丢。
+      - app-data:/app/data
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  app-data:

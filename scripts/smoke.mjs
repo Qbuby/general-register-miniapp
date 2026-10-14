@@ -71,6 +71,17 @@ async function main() {
   // ------------------------------------------------------------ 场景 A：机构
   section('场景 A：机构创建与隔离');
   const aliceLogin = await api('POST', '/api/auth/dev-login', { body: { nickname: '机构A管理员' } });
+
+  // 生产环境会关闭开发登录，此时无法自动建账号。直接说清楚，别让脚本崩在半路。
+  if (aliceLogin.status !== 200) {
+    console.error('\n无法登录：服务端返回 ' + aliceLogin.status + ' —— ' + (aliceLogin.json?.error?.message ?? ''));
+    console.error('冒烟测试依赖 POST /api/auth/dev-login，该接口在以下情况会被关闭：');
+    console.error('  · 目标服务以 NODE_ENV=production 运行（这是预期行为）');
+    console.error('  · 服务端设置了 AUTH_DEV_MODE=false');
+    console.error('\n请改用开发环境的实例执行：BASE=http://127.0.0.1:3000 npm run smoke');
+    process.exit(1);
+  }
+
   const bobLogin = await api('POST', '/api/auth/dev-login', { body: { nickname: '机构B管理员' } });
   const A = aliceLogin.json.token;
   const B = bobLogin.json.token;

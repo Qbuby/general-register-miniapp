@@ -290,6 +290,27 @@ npm run smoke  # 43 项：对真实 HTTP 服务跑验收场景 A–G
 
 ## 部署
 
+### Docker（推荐）
+
+仓库自带 `Dockerfile` 与 `docker-compose.yml`，四阶段构建，运行层不含编译工具链与开发依赖：
+
+```bash
+cp .env.example .env      # 至少填 TOKEN_SECRET
+docker compose up -d --build
+curl http://localhost:3000/api/health
+```
+
+关键约定：
+
+- 基础镜像 `node:24-slim`（需要 `node:sqlite`，即 Node ≥ 22.5）。
+- 构建阶段执行 `npm run build`，其中包含 `scripts/copy-assets.mjs`——
+  **`tsc` 不会搬运 `.sql` 迁移文件**，少了这一步容器启动即失败。
+- 以非 root 的 `node` 用户运行，`/app/data` 声明为卷，SQLite 数据持久化。
+- `TOKEN_SECRET` / `WX_APPID` / `WX_APPSECRET` 全部运行时注入，镜像里不含任何机密。
+- compose 文件对 `TOKEN_SECRET` 做了必填校验，缺失时直接报错而不是让容器起来后崩。
+
+### 传统部署
+
 1. 构建：`npm run build && npm run prune --omit=dev`，入口 `dist/index.js`。
 2. 设置环境变量：`NODE_ENV=production`、`TOKEN_SECRET`、`PUBLIC_BASE_URL`、
    `WX_APPID`、`WX_APPSECRET`、`PREVIEW_TOKEN`。
