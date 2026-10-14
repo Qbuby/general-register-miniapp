@@ -1,0 +1,22 @@
+{
+  "pages": [
+    "pages/org-home/index",
+    "pages/project-detail/index",
+    "pages/register-success/index",
+    "pages/mine/index",
+    "pages/workbench/index",
+    "pages/org-edit/index",
+    "pages/project-edit/index",
+    "pages/registrations/index",
+    "pages/qrcode/index"
+  ],
+  "window": {
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#ffffff",
+    "navigationBarTitleText": "招生报名",
+    "navigationBarTextStyle": "black"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

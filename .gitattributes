@@ -1,0 +1,15 @@
+# 统一以 LF 存入仓库，避免 Windows 检出时反复产生整文件的换行差异。
+* text=auto eol=lf
+
+# 二进制资源不做换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+
+# 锁文件交给 npm 维护
+package-lock.json -diff

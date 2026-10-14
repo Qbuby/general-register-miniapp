@@ -1,0 +1,32 @@
+<view wx:if="{{error}}" class="state">{{error}}</view>
+
+<block wx:elif="{{receipt}}">
+  <view class="result">
+    <view class="icon">✓</view>
+    <view class="result-title">报名成功</view>
+    <view class="muted">请保存报名编号，机构会尽快与你联系</view>
+  </view>
+
+  <view class="card">
+    <view class="row"><text class="muted">报名编号</text><text class="strong">{{receipt.receiptCode}}</text></view>
+    <view class="row"><text class="muted">报名项目</text><text>{{receipt.projectTitle}}</text></view>
+    <view class="row"><text class="muted">报名人</text><text>{{receipt.contactName || '—'}}</text></view>
+    <view class="row"><text class="muted">报名时间</text><text>{{receipt.createdAt}}</text></view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">接下来怎么做</view>
+    <view class="muted">
+      机构（{{receipt.organizationName}}）会在工作时间内联系你确认名额。请保持手机畅通，
+      如需取消或修改报名信息，请直接联系机构。
+    </view>
+    <view wx:if="{{contact}}" class="contact-block">
+      <view class="row"><text class="muted">联系人</text><text>{{contact.name || '—'}}</text></view>
+      <view class="row"><text class="muted">联系电话</text><text>{{contact.phone || '—'}}</text></view>
+      <view class="row"><text class="muted">微信号</text><text>{{contact.wechatId || '—'}}</text></view>
+      <view class="btn btn-plain copy-btn" bindtap="copyContact">复制联系方式</view>
+    </view>
+  </view>
+
+  <view class="tips muted">提示：修改或删除小程序后报名记录不会丢失，可在原二维码处重新进入查看项目。</view>
+</block>

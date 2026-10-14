@@ -1,0 +1,35 @@
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state state-error">
+  <view>{{error}}</view>
+  <view class="btn btn-plain state-btn" bindtap="onRetry">重新加载</view>
+</view>
+
+<block wx:else>
+  <view class="card profile">
+    <view class="avatar">{{user.nickname ? user.nickname.slice(0, 1) : '我'}}</view>
+    <view>
+      <view class="nickname">{{user.nickname}}</view>
+      <view class="muted">微信用户</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">我的机构（{{organizations.length}}）</view>
+    <view wx:if="{{organizations.length === 0}}" class="muted">你还没有创建或加入任何机构。</view>
+
+    <view wx:for="{{organizations}}" wx:key="id" class="org-item" data-id="{{item.id}}" bindtap="onOpenOrg">
+      <view class="org-name">{{item.name}}</view>
+      <view class="muted">{{item.role === 'owner' ? '管理员' : '成员'}} · {{item.status === 'published' ? '已发布' : (item.status === 'hidden' ? '仅链接可见' : '未发布')}}</view>
+      <view class="arrow">›</view>
+    </view>
+
+    <view class="btn create-btn" bindtap="onCreateOrg">+ 创建我的机构</view>
+  </view>
+
+  <view class="card">
+    <view class="muted">公众用户：扫描机构或项目二维码即可查看主页并报名。</view>
+  </view>
+
+  <view class="card signout" bindtap="onSignOut"><text>退出登录</text></view>
+</block>

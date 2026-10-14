@@ -1,0 +1,154 @@
+<view class="card">
+  <view class="field">
+    <view class="label">项目名称 <text class="req">*</text></view>
+    <input class="input" value="{{form.title}}" data-field="title" bindinput="onInput" placeholder="例如：暑期军事训练营（第 3 期）" />
+  </view>
+
+  <view class="field">
+    <view class="label">项目类型</view>
+    <picker mode="selector" range="{{typeOptions}}" range-key="label" value="{{typeIndex}}" bindchange="onTypeChange">
+      <view class="input picker">{{typeOptions[typeIndex].label}}</view>
+    </picker>
+  </view>
+
+  <view class="field">
+    <view class="label">封面图地址</view>
+    <input class="input" value="{{form.coverUrl}}" data-field="coverUrl" bindinput="onInput" placeholder="https://…（可留空）" />
+  </view>
+
+  <view class="field">
+    <view class="label">一句话简介</view>
+    <input class="input" value="{{form.summary}}" data-field="summary" bindinput="onInput" placeholder="展示在机构主页的项目卡片上" />
+  </view>
+
+  <view class="field">
+    <view class="label">详细介绍</view>
+    <textarea class="textarea" value="{{form.description}}" data-field="description" bindinput="onInput" placeholder="课程安排、费用说明、注意事项等" />
+  </view>
+
+  <view class="field">
+    <view class="label">举办地点</view>
+    <input class="input" value="{{form.location}}" data-field="location" bindinput="onInput" />
+  </view>
+</view>
+
+<view class="card">
+  <view class="section-title">时间与名额</view>
+  <view class="field">
+    <view class="label">开始日期</view>
+    <picker mode="date" value="{{form.startAt}}" data-field="startAt" bindchange="onDateChange">
+      <view class="input picker {{form.startAt ? '' : 'ph'}}">{{form.startAt || '请选择'}}</view>
+    </picker>
+  </view>
+  <view class="field">
+    <view class="label">结束日期</view>
+    <picker mode="date" value="{{form.endAt}}" data-field="endAt" bindchange="onDateChange">
+      <view class="input picker {{form.endAt ? '' : 'ph'}}">{{form.endAt || '请选择'}}</view>
+    </picker>
+  </view>
+  <view class="field">
+    <view class="label">报名开始日期</view>
+    <picker mode="date" value="{{form.signupStartAt}}" data-field="signupStartAt" bindchange="onDateChange">
+      <view class="input picker {{form.signupStartAt ? '' : 'ph'}}">{{form.signupStartAt || '立即开始'}}</view>
+    </picker>
+  </view>
+  <view class="field">
+    <view class="label">报名截止日期</view>
+    <picker mode="date" value="{{form.signupEndAt}}" data-field="signupEndAt" bindchange="onDateChange">
+      <view class="input picker {{form.signupEndAt ? '' : 'ph'}}">{{form.signupEndAt || '不限'}}</view>
+    </picker>
+    <view class="hint">截止当天的报名提交由服务端判断，扫码进入会显示“报名已截止”。</view>
+  </view>
+  <view class="field">
+    <view class="label">人数上限</view>
+    <input class="input" type="number" value="{{form.capacity}}" data-field="capacity" bindinput="onInput" placeholder="留空表示不限人数" />
+  </view>
+  <view class="field">
+    <view class="label">排序号</view>
+    <input class="input" type="number" value="{{form.sortOrder}}" data-field="sortOrder" bindinput="onInput" placeholder="数字越小越靠前" />
+  </view>
+</view>
+
+<view class="card">
+  <view class="section-title">发布状态</view>
+  <picker mode="selector" range="{{statusOptions}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
+    <view class="input picker">{{statusOptions[statusIndex].label}}</view>
+  </picker>
+
+  <view class="switch-row">
+    <view>
+      <view class="switch-title">开放报名</view>
+      <view class="hint">关闭后公众仍可查看项目，但无法提交报名。</view>
+    </view>
+    <switch checked="{{form.signupEnabled}}" bindchange="onToggleSignup" color="#2b62d9" />
+  </view>
+
+  <view class="switch-row">
+    <view>
+      <view class="switch-title">允许同一微信用户重复报名</view>
+      <view class="hint">关闭时，同一微信用户在该项目只能成功报名一次。</view>
+    </view>
+    <switch checked="{{form.allowDuplicate}}" bindchange="onToggleDuplicate" color="#2b62d9" />
+  </view>
+</view>
+
+<view class="card">
+  <view class="section-title">报名表配置</view>
+  <view class="muted">
+    每个项目可以有完全不同的报名表。字段的排序决定报名页的显示顺序；
+    修改或删除字段不会影响已提交的历史报名数据。
+  </view>
+
+  <view class="builder-actions">
+    <view class="builder-btn" bindtap="onApplyTemplate">套用模板</view>
+    <view class="builder-btn" bindtap="onAddField">+ 添加字段</view>
+    <view class="builder-btn" bindtap="onPreviewForm">预览</view>
+  </view>
+
+  <view wx:if="{{fields.length === 0}}" class="muted empty">还没有配置字段，点击「套用模板」或「添加字段」开始。</view>
+
+  <view wx:for="{{fields}}" wx:key="index" class="field-item">
+    <view class="field-item-head">
+      <text class="field-index">字段 {{index + 1}}</text>
+      <view class="field-ops">
+        <text class="op" data-index="{{index}}" data-delta="-1" catchtap="onMove">↑</text>
+        <text class="op" data-index="{{index}}" data-delta="1" catchtap="onMove">↓</text>
+        <text class="op op-danger" data-index="{{index}}" catchtap="onDeleteField">删除</text>
+      </view>
+    </view>
+
+    <view class="sub-field">
+      <view class="label">字段名称</view>
+      <input class="input" value="{{item.label}}" data-index="{{index}}" data-field="label" bindinput="onFieldInput" placeholder="例如：监护人手机号" />
+    </view>
+
+    <view class="sub-field">
+      <view class="label">字段类型</view>
+      <picker mode="selector" range="{{fieldTypeLabels}}" range-key="*this" value="{{item.typeIndex}}" data-index="{{index}}" bindchange="onFieldTypeChange">
+        <view class="input picker">{{fieldTypeLabels[item.typeIndex]}}</view>
+      </picker>
+    </view>
+
+    <view class="sub-field">
+      <view class="label">提示文案（选填，显示在输入框下方）</view>
+      <input class="input" value="{{item.hint}}" data-index="{{index}}" data-field="hint" bindinput="onFieldInput" />
+    </view>
+
+    <view wx:if="{{item.type === 'radio' || item.type === 'checkbox' || item.type === 'select'}}" class="sub-field">
+      <view class="label">选项（每行一个）</view>
+      <textarea class="textarea" value="{{item.optionsText}}" data-index="{{index}}" data-field="optionsText" bindinput="onFieldInput" placeholder="第一期&#10;第二期&#10;第三期" />
+    </view>
+
+    <view class="switch-row sub-switch">
+      <view class="switch-title">必填</view>
+      <switch checked="{{item.required}}" data-index="{{index}}" bindchange="onFieldRequiredChange" color="#2b62d9" />
+    </view>
+  </view>
+</view>
+
+<view class="footer">
+  <view class="btn" bindtap="onSave">{{saving ? '保存中…' : '保存项目'}}</view>
+  <view wx:if="{{isEdit}}" class="btn btn-plain toggle-btn" bindtap="onTogglePublished">
+    {{form.status === 'published' ? '一键下架' : '一键发布'}}
+  </view>
+</view>

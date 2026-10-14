@@ -1,0 +1,115 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx 10rpx;
+  background: #fff;
+}
+
+.search {
+  flex: 1;
+  background: #f2f3f5;
+  border-radius: 10rpx;
+  padding: 16rpx 20rpx;
+  font-size: 26rpx;
+}
+
+.search-btn {
+  color: #2b62d9;
+  font-size: 26rpx;
+  margin-left: 20rpx;
+}
+
+.filters {
+  white-space: nowrap;
+  padding: 10rpx 24rpx 16rpx;
+  background: #fff;
+}
+
+.filter {
+  display: inline-block;
+  padding: 10rpx 24rpx;
+  border-radius: 30rpx;
+  background: #f2f3f5;
+  color: #4b5563;
+  font-size: 24rpx;
+  margin-right: 14rpx;
+}
+
+.filter-active {
+  background: #2b62d9;
+  color: #fff;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 24rpx 10rpx;
+  color: #8a9099;
+  font-size: 24rpx;
+}
+
+.export {
+  color: #2b62d9;
+}
+
+.state {
+  padding: 60rpx 40rpx;
+  text-align: center;
+  color: #8a9099;
+  font-size: 26rpx;
+}
+
+.state-error {
+  color: #d4380d;
+}
+
+.state-btn {
+  margin-top: 20rpx;
+  display: inline-block;
+  padding: 14rpx 36rpx;
+}
+
+.reg {
+  padding: 22rpx 24rpx;
+}
+
+.reg-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.reg-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.reg-phone {
+  color: #2b62d9;
+  font-size: 26rpx;
+  margin: 6rpx 0;
+}
+
+.answer {
+  margin-top: 8rpx;
+}
+
+.actions {
+  display: flex;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f1f3;
+}
+
+.action {
+  color: #2b62d9;
+  font-size: 24rpx;
+  margin-right: 28rpx;
+  padding: 6rpx 0;
+}
+
+.action-danger {
+  color: #d4380d;
+}

@@ -1,0 +1,44 @@
+.state {
+  padding: 80rpx 40rpx;
+  text-align: center;
+  color: #8a9099;
+}
+
+.result {
+  background: #fff;
+  padding: 70rpx 40rpx 50rpx;
+  text-align: center;
+}
+
+.icon {
+  width: 96rpx;
+  height: 96rpx;
+  line-height: 96rpx;
+  border-radius: 48rpx;
+  background: #1e8e4e;
+  color: #fff;
+  font-size: 52rpx;
+  margin: 0 auto 20rpx;
+}
+
+.result-title {
+  font-size: 38rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+
+.strong {
+  font-weight: 600;
+}
+
+.contact-block {
+  margin-top: 16rpx;
+}
+
+.copy-btn {
+  margin-top: 24rpx;
+}
+
+.tips {
+  padding: 0 40rpx 60rpx;
+}

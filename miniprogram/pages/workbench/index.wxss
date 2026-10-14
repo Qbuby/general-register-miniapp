@@ -1,0 +1,102 @@
+.state {
+  padding: 80rpx 40rpx;
+  text-align: center;
+  color: #8a9099;
+}
+
+.state-error {
+  color: #d4380d;
+}
+
+.state-btn {
+  margin-top: 24rpx;
+  display: inline-block;
+  padding: 16rpx 40rpx;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.org-name {
+  font-size: 34rpx;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+
+.edit-link {
+  color: #2b62d9;
+  padding: 10rpx 20rpx;
+}
+
+.stat-row {
+  display: flex;
+  margin: 0 24rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 0;
+}
+
+.stat {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 40rpx;
+  font-weight: 600;
+  color: #2b62d9;
+}
+
+.qr-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.arrow {
+  color: #c3c8ce;
+  font-size: 34rpx;
+}
+
+.project {
+  border-top: 1rpx solid #f0f1f3;
+  padding: 24rpx 0;
+}
+
+.project:first-of-type {
+  border-top: none;
+}
+
+.project-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+
+.tags {
+  margin-bottom: 10rpx;
+}
+
+.project-meta {
+  font-size: 24rpx;
+  line-height: 1.8;
+}
+
+.project-actions {
+  display: flex;
+  margin-top: 16rpx;
+}
+
+.action {
+  color: #2b62d9;
+  font-size: 26rpx;
+  padding: 10rpx 28rpx 10rpx 0;
+  margin-right: 28rpx;
+}
+
+.create-btn {
+  margin-top: 24rpx;
+}

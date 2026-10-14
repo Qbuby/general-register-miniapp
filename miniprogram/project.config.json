@@ -1,0 +1,45 @@
+{
+  "description": "通用机构招生报名小程序 - 项目配置。appid 请替换为你自己的微信小程序 AppID。",
+  "miniprogramRoot": "./",
+  "appid": "touristappid",
+  "projectname": "general-register-miniapp",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": false,
+    "postcss": true,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "机构主页",
+          "pathName": "pages/org-home/index",
+          "query": "code=替换为机构分享码",
+          "scene": null
+        },
+        {
+          "name": "项目详情",
+          "pathName": "pages/project-detail/index",
+          "query": "code=替换为项目分享码",
+          "scene": null
+        }
+      ]
+    }
+  }
+}

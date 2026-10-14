@@ -1,0 +1,54 @@
+<view class="card">
+  <view class="field">
+    <view class="label">机构名称 <text class="req">*</text></view>
+    <input class="input" value="{{form.name}}" data-field="name" bindinput="onInput" placeholder="例如：星辰青少年教育" />
+  </view>
+
+  <view class="field">
+    <view class="label">Logo 图片地址</view>
+    <input class="input" value="{{form.logoUrl}}" data-field="logoUrl" bindinput="onInput" placeholder="https://…（可留空）" />
+    <view class="hint">填入图片 URL，会显示在主页顶部与小程序码页面。</view>
+  </view>
+
+  <view class="field">
+    <view class="label">主页封面地址</view>
+    <input class="input" value="{{form.coverUrl}}" data-field="coverUrl" bindinput="onInput" placeholder="https://…（可留空）" />
+  </view>
+
+  <view class="field">
+    <view class="label">机构介绍</view>
+    <textarea class="textarea" value="{{form.intro}}" data-field="intro" bindinput="onInput" placeholder="介绍一下你的机构、办学理念、师资等" />
+  </view>
+</view>
+
+<view class="card">
+  <view class="section-title">联系方式</view>
+  <view class="field">
+    <view class="label">联系人</view>
+    <input class="input" value="{{form.contactName}}" data-field="contactName" bindinput="onInput" />
+  </view>
+  <view class="field">
+    <view class="label">联系电话</view>
+    <input class="input" value="{{form.contactPhone}}" data-field="contactPhone" bindinput="onInput" />
+  </view>
+  <view class="field">
+    <view class="label">微信号</view>
+    <input class="input" value="{{form.wechatId}}" data-field="wechatId" bindinput="onInput" />
+  </view>
+  <view class="field">
+    <view class="label">地址 / 活动地点</view>
+    <input class="input" value="{{form.address}}" data-field="address" bindinput="onInput" />
+  </view>
+</view>
+
+<view class="card">
+  <view class="section-title">主页状态</view>
+  <picker mode="selector" range="{{statusOptions}}" range-key="label" value="{{statusIndex}}" bindchange="onStatusChange">
+    <view class="input picker">{{statusOptions[statusIndex].label}}</view>
+  </picker>
+  <view class="hint">「已发布」后公众扫码可正常打开主页；「未发布」时主页不可访问。</view>
+</view>
+
+<view class="footer">
+  <view class="btn" bindtap="onSave">{{saving ? '保存中…' : '保存'}}</view>
+</view>

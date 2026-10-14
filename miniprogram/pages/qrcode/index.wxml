@@ -1,0 +1,43 @@
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state state-error">
+  <view>{{error}}</view>
+  <view class="btn btn-plain state-btn" bindtap="onRetry">重新加载</view>
+</view>
+
+<block wx:elif="{{qr}}">
+  <view wx:if="{{qr.mode === 'preview'}}" class="notice">
+    {{qr.warning}}
+  </view>
+
+  <view class="card qr-card">
+    <view class="section-title">{{isProject ? title : '机构主页'}}二维码</view>
+    <image class="qr-image" src="{{imageUrl}}" mode="aspectFit" bindtap="onPreview" />
+    <view class="muted center">点击图片可放大预览，便于核对</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">使用说明</view>
+    <view class="muted" wx:if="{{isProject}}">
+      微信扫描后直接进入「{{title}}」的详情页并可立即报名，不必先进入机构主页查找。
+    </view>
+    <view class="muted" wx:else>
+      微信扫描后直接进入本机构主页，展示机构介绍与全部在招项目。
+    </view>
+    <view class="muted" style="margin-top:12rpx">
+      分享码 <text class="code">{{qr.code}}</text> 一经生成不会变化，打印出去的二维码长期有效；
+      重新获取只会为同一个码重新生成图片。
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">扫码落地页</view>
+    <view class="muted break">{{qr.targetUrl}}</view>
+    <view class="btn btn-plain op-btn" bindtap="onCopyTarget">复制链接</view>
+  </view>
+
+  <view class="footer">
+    <view class="btn {{downloading ? 'btn-disabled' : ''}}" bindtap="onSave">{{downloading ? '保存中…' : '保存到相册'}}</view>
+    <view class="muted tip">保存后可在相册中裁剪，用于宣传单、海报、易拉宝。</view>
+  </view>
+</block>

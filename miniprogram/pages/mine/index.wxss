@@ -1,0 +1,66 @@
+.state {
+  padding: 80rpx 40rpx;
+  text-align: center;
+  color: #8a9099;
+}
+
+.state-error {
+  color: #d4380d;
+}
+
+.state-btn {
+  margin-top: 24rpx;
+  display: inline-block;
+  padding: 16rpx 40rpx;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50rpx;
+  background: #2b62d9;
+  color: #fff;
+  text-align: center;
+  line-height: 100rpx;
+  font-size: 40rpx;
+  margin-right: 24rpx;
+}
+
+.nickname {
+  font-size: 32rpx;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+
+.org-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #f0f1f3;
+}
+
+.org-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  margin-bottom: 4rpx;
+}
+
+.arrow {
+  color: #c3c8ce;
+  font-size: 34rpx;
+}
+
+.create-btn {
+  margin-top: 24rpx;
+}
+
+.signout {
+  text-align: center;
+  color: #d4380d;
+}

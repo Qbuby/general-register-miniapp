@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "项目详情",
+  "usingComponents": {
+    "form-field": "/components/form-field/index"
+  }
+}

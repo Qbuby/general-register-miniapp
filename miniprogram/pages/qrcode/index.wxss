@@ -1,0 +1,56 @@
+.state {
+  padding: 80rpx 40rpx;
+  text-align: center;
+  color: #8a9099;
+}
+
+.state-error {
+  color: #d4380d;
+}
+
+.state-btn {
+  margin-top: 24rpx;
+  display: inline-block;
+  padding: 16rpx 40rpx;
+}
+
+.qr-card {
+  text-align: center;
+}
+
+.qr-card .section-title {
+  text-align: left;
+}
+
+.qr-image {
+  width: 480rpx;
+  height: 480rpx;
+  margin: 24rpx auto 16rpx;
+  background: #fff;
+}
+
+.center {
+  text-align: center;
+}
+
+.break {
+  word-break: break-all;
+}
+
+.code {
+  color: #2b62d9;
+  letter-spacing: 2rpx;
+}
+
+.op-btn {
+  margin-top: 20rpx;
+}
+
+.footer {
+  padding: 20rpx 24rpx 60rpx;
+}
+
+.tip {
+  text-align: center;
+  margin-top: 16rpx;
+}

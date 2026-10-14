@@ -1,0 +1,58 @@
+<view class="field">
+  <view class="field-label">
+    <text class="field-name">{{field.label}}</text>
+    <text wx:if="{{field.required}}" class="req">*</text>
+  </view>
+
+  <block wx:if="{{field.type === 'text'}}">
+    <input class="input" value="{{value}}" placeholder="{{field.placeholder || ''}}" placeholder-class="ph" maxlength="-1" data-field="{{field}}" bindinput="onInput" />
+  </block>
+
+  <block wx:elif="{{field.type === 'textarea'}}">
+    <textarea class="textarea" value="{{value}}" placeholder="{{field.placeholder || ''}}" placeholder-class="ph" maxlength="-1" data-field="{{field}}" bindinput="onInput" auto-height />
+  </block>
+
+  <block wx:elif="{{field.type === 'phone'}}">
+    <input class="input" type="number" value="{{value}}" placeholder="{{field.placeholder || '请输入手机号或固定电话'}}" placeholder-class="ph" maxlength="-1" data-field="{{field}}" bindinput="onInput" />
+  </block>
+
+  <block wx:elif="{{field.type === 'number'}}">
+    <input class="input" type="digit" value="{{value}}" placeholder="{{field.placeholder || ''}}" placeholder-class="ph" maxlength="-1" data-field="{{field}}" bindinput="onInput" />
+  </block>
+
+  <block wx:elif="{{field.type === 'date'}}">
+    <picker mode="date" value="{{value}}" bindchange="onInput">
+      <view class="input picker {{value ? '' : 'ph'}}">{{value || (field.placeholder || '请选择日期')}}</view>
+    </picker>
+  </block>
+
+  <block wx:elif="{{field.type === 'radio'}}">
+    <view class="options">
+      <view
+        wx:for="{{field.options}}"
+        wx:key="*this"
+        class="option {{value === item ? 'option-active' : ''}}"
+        data-value="{{item}}"
+        bindtap="onRadioTap"
+      >{{item}}</view>
+    </view>
+  </block>
+
+  <block wx:elif="{{field.type === 'checkbox'}}">
+    <checkbox-group class="options" data-field="{{field}}" bindchange="onCheckboxChange">
+      <label wx:for="{{field.options}}" wx:key="*this" class="option">
+        <checkbox value="{{item}}" checked="{{checked.indexOf(item) > -1}}" color="#2b62d9" />
+        <text>{{item}}</text>
+      </label>
+    </checkbox-group>
+  </block>
+
+  <block wx:elif="{{field.type === 'select'}}">
+    <picker mode="selector" range="{{field.options}}" value="{{selectedIndex}}" bindchange="onSelectChange">
+      <view class="input picker {{value ? '' : 'ph'}}">{{value || (field.placeholder || '请选择')}}</view>
+    </picker>
+  </block>
+
+  <view wx:if="{{field.hint}}" class="hint">{{field.hint}}</view>
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+</view>

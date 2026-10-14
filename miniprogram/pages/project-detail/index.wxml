@@ -1,0 +1,69 @@
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state state-error">
+  <view>{{error}}</view>
+  <view class="btn btn-plain state-btn" bindtap="onRetry">重新加载</view>
+</view>
+
+<block wx:elif="{{project}}">
+  <image wx:if="{{project.coverUrl}}" class="cover" src="{{project.coverUrl}}" mode="aspectFill" />
+
+  <view class="card">
+    <view class="title">{{project.title}}</view>
+    <view class="tags">
+      <text class="tag">{{project.typeLabel}}</text>
+      <text class="tag {{project.canSubmit ? 'tag-ok' : 'tag-warn'}}">{{project.signupLabel}}</text>
+    </view>
+    <view wx:if="{{project.summary}}" class="muted summary">{{project.summary}}</view>
+  </view>
+
+  <view class="card">
+    <view class="section-title">项目信息</view>
+    <view wx:if="{{project.startText}}" class="row"><text class="muted">活动时间</text><text>{{project.startText}}{{project.endText ? ' — ' + project.endText : ''}}</text></view>
+    <view wx:if="{{project.location}}" class="row"><text class="muted">活动地点</text><text>{{project.location}}</text></view>
+    <view wx:if="{{project.signupEndText}}" class="row"><text class="muted">报名截止</text><text>{{project.signupEndText}}</text></view>
+    <view class="row">
+      <text class="muted">名额</text>
+      <text>{{project.capacity == null ? '不限人数' : project.remaining + ' / ' + project.capacity + ' 人'}}</text>
+    </view>
+    <view class="row"><text class="muted">发布机构</text><text>{{organization.name}}</text></view>
+  </view>
+
+  <view wx:if="{{project.description}}" class="card">
+    <view class="section-title">详细介绍</view>
+    <view class="muted detail">{{project.description}}</view>
+  </view>
+
+  <view wx:if="{{project.canSubmit}}" class="card">
+    <view class="section-title">报名信息</view>
+    <view wx:if="{{fields.length === 0}}" class="muted">该机构未配置报名表。</view>
+    <form-field
+      wx:for="{{fields}}"
+      wx:key="key"
+      field="{{item}}"
+      value="{{answers[item.key]}}"
+      error="{{errors[item.key] || ''}}"
+      bindchange="onFieldChange"
+    />
+  </view>
+
+  <view wx:else class="notice">
+    当前不可报名：{{project.signupReason}}。你仍可以查看项目详情，如需咨询请联系机构。
+  </view>
+
+  <view class="card contact">
+    <view class="section-title">联系方式</view>
+    <view class="row"><text class="muted">联系人</text><text>{{organization.contactName || '—'}}</text></view>
+    <view class="row"><text class="muted">联系电话</text><text>{{organization.contactPhone || '—'}}</text></view>
+    <view class="row"><text class="muted">微信号</text><text>{{organization.wechatId || '—'}}</text></view>
+    <view class="btn btn-plain contact-btn" bindtap="copyContact">复制联系方式</view>
+  </view>
+
+  <view class="footer">
+    <view
+      class="btn {{project.canSubmit ? '' : 'btn-disabled'}}"
+      bindtap="onSubmit"
+    >{{project.canSubmit ? submittingText : project.signupReason}}</view>
+    <view wx:if="{{!project.canSubmit}}" class="tip">当前状态无法提交报名</view>
+  </view>
+</block>
