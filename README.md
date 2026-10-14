@@ -309,6 +309,15 @@ curl http://localhost:3000/api/health
 - `TOKEN_SECRET` / `WX_APPID` / `WX_APPSECRET` 全部运行时注入，镜像里不含任何机密。
 - compose 文件对 `TOKEN_SECRET` 做了必填校验，缺失时直接报错而不是让容器起来后崩。
 
+**国内网络拉取基础镜像**：若 `docker pull` 卡住或 DNS 解析异常，可先走镜像加速器
+拉取再打回标准标签，Dockerfile 无需改动：
+
+```bash
+docker pull docker.m.daocloud.io/library/node:24-slim
+docker tag  docker.m.daocloud.io/library/node:24-slim node:24-slim
+docker compose up -d --build
+```
+
 ### 传统部署
 
 1. 构建：`npm run build && npm run prune --omit=dev`，入口 `dist/index.js`。
