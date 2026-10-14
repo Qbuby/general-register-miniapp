@@ -48,8 +48,8 @@ npm start                  # 启动服务，默认 http://localhost:3000
 | --- | --- |
 | `npm start` | 启动服务 |
 | `npm run dev` | 带热重载启动 |
-| `npm test` | 运行自动化测试（60 项） |
-| `npm run smoke` | 对运行中的服务做端到端验证（43 项，需先 `npm start`） |
+| `npm test` | 运行自动化测试（107 项） |
+| `npm run smoke` | 对运行中的服务做端到端验证（54 项，需先 `npm start`） |
 | `npm run seed` | 写入演示数据 |
 | `npm run migrate` | 只执行数据库迁移 |
 | `npm run typecheck` | TypeScript 类型检查 |
@@ -289,8 +289,8 @@ JSON 答案，改表单会让历史记录失去可读性。
 ## 测试
 
 ```bash
-npm test     # 60 项：多租户隔离、动态表单、名额并发、导出、二维码
-npm run smoke  # 43 项：对真实 HTTP 服务跑验收场景 A–G
+npm test     # 107 项：多租户隔离、动态表单、名额并发、导出、二维码解码、成员、边界
+npm run smoke  # 54 项：对真实 HTTP 服务跑验收场景 A–G 与成员流程
 ```
 
 自动化测试覆盖的重点：

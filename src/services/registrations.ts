@@ -198,6 +198,17 @@ export function submitRegistration(params: SubmitParams): SubmitResult {
   });
 }
 
+/**
+ * 转义 LIKE 通配符。
+ *
+ * 用户在搜索框里输入的 % 和 _ 在 SQL LIKE 里是通配符，不转义的话
+ * 搜一个「%」会把该机构的全部报名记录都列出来——既不符合直觉，
+ * 也相当于把筛选功能绕过去了。配合 ESCAPE '\' 使用。
+ */
+function escapeLike(term: string): string {
+  return term.replace(/[\\%_]/g, (ch) => `\\${ch}`);
+}
+
 export interface ListParams {
   organizationId: string;
   projectId?: string | null;
@@ -219,8 +230,13 @@ export function listRegistrations(params: ListParams) {
     args.push(params.status);
   }
   if (params.q) {
-    where.push('(r.contact_name LIKE ? OR r.contact_phone LIKE ? OR r.answers LIKE ? OR r.id = ?)');
-    const like = `%${params.q}%`;
+    where.push(
+      `(r.contact_name LIKE ? ESCAPE '\\'
+        OR r.contact_phone LIKE ? ESCAPE '\\'
+        OR r.answers LIKE ? ESCAPE '\\'
+        OR r.id = ?)`,
+    );
+    const like = `%${escapeLike(params.q)}%`;
     args.push(like, like, like, params.q);
   }
   const whereSql = where.join(' AND ');

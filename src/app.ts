@@ -64,6 +64,16 @@ export function buildApp(options: BuildOptions = {}) {
       reply.code(400).send({ error: { code: 'invalid_input', message: '请求参数不合法' } });
       return;
     }
+    // Fastify 自身的解析错误（body 不是合法 JSON、payload 超限等）会带 4xx 的
+    // statusCode。不处理的话它们会掉进下面的 500 分支——用户发了个格式错误的
+    // 请求却看到「服务器内部错误」，既误导也掩盖了真实原因。
+    const status = (error as { statusCode?: number }).statusCode;
+    if (typeof status === 'number' && status >= 400 && status < 500) {
+      reply.code(status).send({
+        error: { code: 'invalid_input', message: '请求内容不合法' },
+      });
+      return;
+    }
     request.log.error(error);
     reply.code(500).send({ error: { code: 'internal_error', message: '服务器内部错误' } });
   });

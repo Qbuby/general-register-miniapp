@@ -366,6 +366,60 @@ async function main() {
   });
   check('已截止项目无法提交报名', closedSubmit.status === 409);
 
+  // ------------------------------------------------------- 附加：成员与邀请
+  section('附加：机构成员与角色');
+  const memberInvite = (
+    await api('POST', `/api/orgs/${orgA.id}/invites`, { token: A, body: { role: 'admin' } })
+  ).json.invite;
+  check('owner 可生成邀请码', Boolean(memberInvite?.code));
+
+  const ownerInviteDenied = await api('POST', `/api/orgs/${orgA.id}/invites`, { token: A, body: { role: 'owner' } });
+  check('邀请不能授予所有者', ownerInviteDenied.status === 400);
+
+  const staffLogin = await api('POST', '/api/auth/dev-login', { body: { nickname: '冒烟机构A成员' } });
+  const staff = staffLogin.json.token;
+  const accepted = await api('POST', `/api/invites/${memberInvite.code}/accept`, { token: staff });
+  check('成员接受邀请后获得角色', accepted.status === 200 && accepted.json.role === 'admin');
+
+  const membersRes = await api('GET', `/api/orgs/${orgA.id}/members`, { token: A });
+  check('成员列表包含新成员', membersRes.json.members.some((m) => m.userId === staffLogin.json.user.id));
+
+  const staffCanCreate = await api('POST', `/api/orgs/${orgA.id}/projects`, {
+    token: staff,
+    body: { title: '管理员创建的项目' },
+  });
+  check('admin 可创建项目', staffCanCreate.status === 201);
+
+  const staffCannotInvite = await api('POST', `/api/orgs/${orgA.id}/invites`, {
+    token: staff,
+    body: { role: 'operator' },
+  });
+  check('admin 不能管理成员', staffCannotInvite.status === 403);
+
+  const memberList = membersRes.json.members;
+  const adminMember = memberList.find((m) => m.role === 'admin');
+  const demoted = await api('PATCH', `/api/orgs/${orgA.id}/members/${adminMember.id}`, {
+    token: A,
+    body: { role: 'operator' },
+  });
+  check('owner 可降级成员角色', demoted.status === 200);
+
+  const afterDemote = await api('PATCH', `/api/orgs/${orgA.id}`, { token: staff, body: { intro: '越权修改' } });
+  check('降级后立即失去编辑权限', afterDemote.status === 403);
+
+  const lastOwner = memberList.find((m) => m.role === 'owner');
+  const demoteOwner = await api('PATCH', `/api/orgs/${orgA.id}/members/${lastOwner.id}`, {
+    token: A,
+    body: { role: 'admin' },
+  });
+  check('不能降级唯一的所有者', demoteOwner.status === 409);
+
+  const removed = await api('DELETE', `/api/orgs/${orgA.id}/members/${adminMember.id}`, { token: A });
+  check('owner 可移除成员', removed.status === 200);
+
+  const afterRemove = await api('GET', `/api/orgs/${orgA.id}/registrations`, { token: staff });
+  check('移除后权限立即失效', afterRemove.status === 404);
+
   // --------------------------------------------------------- 场景 G：可运行性
   section('场景 G：预览页与真实数据');
   const previewOrg = await fetch(`${BASE}/preview/o/${orgACode}?t=dev-preview`);
