@@ -8,7 +8,10 @@
     "pages/org-edit/index",
     "pages/project-edit/index",
     "pages/registrations/index",
-    "pages/qrcode/index"
+    "pages/qrcode/index",
+    "pages/members/index",
+    "pages/invite/index",
+    "pages/invite-accept/index"
   ],
   "window": {
     "backgroundTextStyle": "dark",

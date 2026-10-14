@@ -115,6 +115,11 @@ Authorization: Bearer <token>
 | GET | `/api/orgs/:orgId/registrations/export.csv` | 导出 CSV |
 | GET | `/api/orgs/:orgId/registrations/:registrationId` | 单条详情 |
 | PATCH | `/api/orgs/:orgId/registrations/:registrationId` | 修改状态 |
+| GET | `/api/orgs/:orgId/members` | 成员列表 |
+| POST / GET | `/api/orgs/:orgId/invites` | 生成 / 查看邀请（仅 owner） |
+| DELETE | `/api/orgs/:orgId/invites/:inviteId` | 撤销邀请（仅 owner） |
+| PATCH / DELETE | `/api/orgs/:orgId/members/:memberId` | 调整角色 / 移出（仅 owner） |
+| GET / POST | `/api/invites/:code` · `/:code/accept` | 预览并接受邀请（接受需登录） |
 | GET | `/api/orgs/:orgId/qrcode` · `.png` | 机构二维码信息 / 图片 |
 | GET | `/api/orgs/:orgId/projects/:projectId/qrcode` · `.png` | 项目二维码信息 / 图片 |
 
@@ -160,3 +165,35 @@ Authorization: Bearer <token>
 
 `GET /api/health` 返回 `{ ok, time, wechat: { configured, appIdMasked } }`。
 `appIdMasked` 只回显前 6 位，便于确认配置是否生效而不泄露完整 AppID。
+
+
+## 成员与邀请
+
+### 角色
+
+| 角色 | 可做 |
+| --- | --- |
+| `owner` | 全部；且是**唯一**能管理成员与邀请的角色 |
+| `admin` | 编辑机构资料、项目、报名表；查看报名与二维码 |
+| `operator` | 查看与处理报名记录、查看二维码 |
+
+角色越权返回 403，跨机构返回 404。
+
+### 邀请
+
+微信无法直接取得他人 openid，因此添加成员必须走邀请：
+
+```
+POST /api/orgs/:orgId/invites   { "role": "admin" | "operator" }   → 邀请码
+POST /api/invites/:code/accept                                      → 成为成员
+```
+
+约束（均由服务端强制）：
+
+- 邀请**不能授予 owner**——所有权不是随手可给的东西；
+- 邀请码 7 天过期、单次使用、可随时撤销；
+- 接受需要登录；接受者成为邀请指定的角色；
+- 不能移除或降级唯一的所有者，也不能移除自己。
+
+接受邀请的接口不接受请求体，但允许空 body（服务端已放宽 Fastify 的
+空 JSON 解析限制，避免不同客户端的调用方式差异变成莫名其妙的 400）。

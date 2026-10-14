@@ -216,3 +216,25 @@ test('机构工作台只列出自己名下的机构', async () => {
   const response = await app.inject({ method: 'GET', url: '/api/orgs', headers: auth(alice) });
   assert.deepEqual(response.json().organizations.map((o: any) => o.name), ['机构A']);
 });
+
+test('没有项目的机构主页仍可正常打开（§4.2 明确要求）', async () => {
+  const empty = await createOrg(app, alice, { name: '空机构', intro: '暂时没有招生项目' });
+  const code = await getQrCode(app, alice, empty.id);
+
+  const home = await app.inject({ method: 'GET', url: `/api/public/organizations/${code}` });
+  assert.equal(home.statusCode, 200, '空机构主页不应报错');
+  assert.equal(home.json().organization.name, '空机构');
+  assert.deepEqual(home.json().projects, [], '项目列表应为空数组而不是缺字段');
+
+  // 工作台统计也应正常，不应因无数据而异常
+  const stats = await app.inject({ method: 'GET', url: `/api/orgs/${empty.id}/stats`, headers: auth(alice) });
+  assert.equal(stats.statusCode, 200);
+  assert.equal(stats.json().stats.projectCount, 0);
+  assert.equal(stats.json().stats.registrationCount, 0);
+  assert.deepEqual(stats.json().stats.perProject, []);
+
+  // 空机构也应当能正常生成自己的二维码
+  const qr = await app.inject({ method: 'GET', url: `/api/orgs/${empty.id}/qrcode`, headers: auth(alice) });
+  assert.equal(qr.statusCode, 200);
+  assert.ok(qr.json().qr.code);
+});

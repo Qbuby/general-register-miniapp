@@ -18,5 +18,7 @@ module.exports = {
   pages: {
     orgHome: 'pages/org-home/index',
     projectDetail: 'pages/project-detail/index',
+    // 邀请链接落地页：由 owner 生成邀请码后分享给被邀请人
+    inviteAccept: 'pages/invite-accept/index',
   },
 };

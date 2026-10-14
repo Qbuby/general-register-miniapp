@@ -1,0 +1,67 @@
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state state-error">
+  <view>{{error}}</view>
+  <view class="btn btn-plain state-btn" bindtap="onRetry">重新加载</view>
+</view>
+
+<block wx:else>
+  <view class="card">
+    <view class="section-title">成员（{{members.length}}）</view>
+    <view class="muted">
+      角色说明：{{roleDescriptions.admin}}；{{roleDescriptions.operator}}。
+    </view>
+  </view>
+
+  <view
+    wx:for="{{members}}"
+    wx:key="id"
+    class="card member"
+  >
+    <view class="member-head">
+      <view class="member-name">
+        {{item.nickname || '微信用户'}}
+        <text wx:if="{{item.isMe}}" class="me">（我）</text>
+      </view>
+      <text class="tag {{item.role === 'owner' ? 'tag-ok' : ''}}">{{item.roleLabel}}</text>
+    </view>
+
+    <view wx:if="{{canManage}}" class="member-actions">
+      <view
+        wx:if="{{item.isMe}}"
+        class="action muted"
+      >无法调整或移出自己</view>
+      <block wx:else>
+        <view
+          wx:if="{{item.role === 'admin'}}"
+          class="action"
+          data-member-id="{{item.id}}"
+          data-role="operator"
+          bindtap="onChangeRole"
+        >降为运营</view>
+        <view
+          wx:if="{{item.role === 'operator'}}"
+          class="action"
+          data-member-id="{{item.id}}"
+          data-role="admin"
+          bindtap="onChangeRole"
+        >升为管理员</view>
+        <view
+          class="action action-danger"
+          data-member-id="{{item.id}}"
+          data-name="{{item.nickname}}"
+          bindtap="onRemoveMember"
+        >移出机构</view>
+      </block>
+    </view>
+  </view>
+
+  <view wx:if="{{canManage}}" class="footer">
+    <view class="btn" bindtap="onInvite">+ 邀请成员加入</view>
+    <view class="muted tip">邀请码 7 天内有效，只能授予「管理员」或「运营」，不能授予所有者。</view>
+  </view>
+
+  <view wx:else class="notice">
+    只有所有者可以管理成员。当前你的角色是「{{roleLabels[myRole] || myRole}}」。
+  </view>
+</block>

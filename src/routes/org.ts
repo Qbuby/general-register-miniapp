@@ -1,7 +1,8 @@
 import type { FastifyInstance, FastifyReply } from 'fastify';
 import { z } from 'zod';
 import { config } from '../config.js';
-import { badRequest, serviceUnavailable } from '../lib/errors.js';
+import { badRequest, notFound, serviceUnavailable } from '../lib/errors.js';
+import { nowIso } from '../lib/time.js';
 import { toCsv } from '../lib/csv.js';
 import { audit, listUserOrganizations, requireMembership } from '../lib/tenant.js';
 import { requireUser } from '../plugins/auth.js';
@@ -35,6 +36,19 @@ import {
   updateRegistrationStatus,
 } from '../services/registrations.js';
 import { describeQr, renderQr, type QrPayload } from '../services/qr.js';
+import {
+  acceptInvite,
+  createInvite,
+  getInviteRow,
+  listInvites,
+  listMembers,
+  ownerCount,
+  removeMember,
+  revokeInvite,
+  updateMemberRole,
+  ROLE_DESCRIPTIONS,
+  ROLE_LABELS,
+} from '../services/members.js';
 
 const listQuerySchema = z.object({
   projectId: z.string().optional(),
@@ -79,7 +93,63 @@ function assertQrAvailable(qr: QrPayload): void {
   }
 }
 
+function toInviteDto(row: Record<string, any>) {
+  return {
+    id: row.id,
+    code: row.code,
+    role: row.role,
+    roleLabel: ROLE_LABELS[row.role as keyof typeof ROLE_LABELS],
+    status: row.status,
+    creatorNickname: row.creator_nickname ?? null,
+    expiresAt: row.expires_at,
+    createdAt: row.created_at,
+    acceptedAt: row.accepted_at ?? null,
+  };
+}
+
 export async function orgRoutes(app: FastifyInstance): Promise<void> {
+  /**
+   * 接受机构邀请。
+   *
+   * 刻意放在 `/api/invites/...` 而不是 `/api/orgs/:orgId/invites/...`：
+   * 接受邀请的人此刻**还不是**该机构成员，不能走 orgScope 校验；
+   * 同时也避免和静态段 `invites` 与参数段 `:orgId` 的路由产生歧义。
+   */
+  app.post('/api/invites/:code/accept', async (request) => {
+    const user = requireUser(request);
+    const { code } = request.params as { code: string };
+    const result = acceptInvite(code, user.id);
+    audit(result.organization.id, user.id, 'invite.accept', {
+      type: 'organization',
+      id: result.organization.id,
+      meta: { role: result.role },
+    });
+    return {
+      organization: { id: result.organization.id, name: result.organization.name },
+      role: result.role,
+      roleLabel: ROLE_LABELS[result.role],
+    };
+  });
+
+  /** 接受前预览邀请内容，让用户知道要加入哪个机构、拿到什么权限。 */
+  app.get('/api/invites/:code', async (request) => {
+    const { code } = request.params as { code: string };
+    const invite = getInviteRow(code);
+    if (!invite || invite.status !== 'pending' || invite.expires_at <= nowIso()) {
+      throw notFound('邀请码无效或已过期');
+    }
+    const organization = getOrganization(invite.organization_id);
+    return {
+      invite: {
+        role: invite.role,
+        roleLabel: ROLE_LABELS[invite.role as keyof typeof ROLE_LABELS],
+        roleDescription: ROLE_DESCRIPTIONS[invite.role as keyof typeof ROLE_DESCRIPTIONS],
+        expiresAt: invite.expires_at,
+      },
+      organization: { name: organization.name },
+    };
+  });
+
   // ---------------------------------------------------------------- my orgs
   app.get('/api/orgs', async (request) => {
     const user = requireUser(request);
@@ -293,6 +363,78 @@ export async function orgRoutes(app: FastifyInstance): Promise<void> {
       meta: { status: body.status },
     });
     return { registration };
+  });
+
+  // --------------------------------------------------------------- members
+  // 成员与角色。数据模型从 v1 就有 organization_members，但只有「创建者即 owner」
+  // 的话整个成员表是无法使用的死能力，所以这里把管理补齐。
+  app.get('/api/orgs/:orgId/members', async (request) => {
+    const { user, orgId } = orgScope(request);
+    return {
+      members: listMembers(orgId).map((m) => ({
+        id: m.id,
+        userId: m.user_id,
+        nickname: m.nickname,
+        avatarUrl: m.avatar_url,
+        role: m.role,
+        roleLabel: ROLE_LABELS[m.role],
+        roleDescription: ROLE_DESCRIPTIONS[m.role],
+        createdAt: m.created_at,
+        // 前端据此隐藏「改角色/移除」等只对 owner 开放的按钮。
+        // 注意这只是界面提示，真正的拦截在服务端。
+        isMe: m.user_id === user.id,
+      })),
+      roleLabels: ROLE_LABELS,
+      roleDescriptions: ROLE_DESCRIPTIONS,
+      ownerCount: ownerCount(orgId),
+    };
+  });
+
+  app.post('/api/orgs/:orgId/invites', async (request, reply) => {
+    const { user, orgId } = orgScope(request, 'owner');
+    const body = parseOrThrow(
+      // 这里故意把 owner 也放进枚举：让 service 层给出「邀请只能授予管理员或运营」
+      // 这样更明确的提示，而不是一个笼统的枚举校验错误。owner 的拦截仍在 service。
+      z.object({ role: z.enum(['owner', 'admin', 'operator']).default('operator') }),
+      request.body ?? {},
+    );
+    const invite = createInvite(orgId, user.id, body.role);
+    audit(orgId, user.id, 'invite.create', { type: 'invite', id: invite.id, meta: { role: invite.role } });
+    reply.code(201);
+    return { invite: toInviteDto(invite) };
+  });
+
+  app.get('/api/orgs/:orgId/invites', async (request) => {
+    const { orgId } = orgScope(request, 'owner');
+    return { invites: listInvites(orgId).map(toInviteDto) };
+  });
+
+  app.delete('/api/orgs/:orgId/invites/:inviteId', async (request) => {
+    const { user, orgId } = orgScope(request, 'owner');
+    const { inviteId } = request.params as { inviteId: string };
+    revokeInvite(orgId, inviteId);
+    audit(orgId, user.id, 'invite.revoke', { type: 'invite', id: inviteId });
+    return { ok: true };
+  });
+
+  app.patch('/api/orgs/:orgId/members/:memberId', async (request) => {
+    const { user, orgId } = orgScope(request, 'owner');
+    const { memberId } = request.params as { memberId: string };
+    const body = parseOrThrow(
+      z.object({ role: z.enum(['admin', 'operator']) }),
+      request.body ?? {},
+    );
+    const member = updateMemberRole(orgId, memberId, body.role);
+    audit(orgId, user.id, 'member.role', { type: 'member', id: memberId, meta: { role: body.role } });
+    return { member: { ...member, roleLabel: ROLE_LABELS[body.role] } };
+  });
+
+  app.delete('/api/orgs/:orgId/members/:memberId', async (request) => {
+    const { user, orgId } = orgScope(request, 'owner');
+    const { memberId } = request.params as { memberId: string };
+    const result = removeMember(orgId, memberId, user.id);
+    audit(orgId, user.id, 'member.remove', { type: 'member', id: memberId });
+    return result;
   });
 
   // --------------------------------------------------------------- qr codes

@@ -42,6 +42,14 @@
     <view class="arrow">›</view>
   </view>
 
+  <view class="card qr-entry" bindtap="onManageMembers">
+    <view>
+      <view class="section-title">成员管理</view>
+      <view class="muted">邀请同事加入，分配管理员或运营角色</view>
+    </view>
+    <view class="arrow">›</view>
+  </view>
+
   <view class="card">
     <view class="section-title">我的项目（{{projects.length}}）</view>
     <view wx:if="{{projects.length === 0}}" class="muted">还没有项目，点击下方按钮创建第一个招生项目。</view>

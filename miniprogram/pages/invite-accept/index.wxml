@@ -1,0 +1,40 @@
+<view wx:if="{{loading}}" class="state">加载中…</view>
+
+<view wx:elif="{{error}}" class="state state-error">
+  <view>{{error}}</view>
+  <view class="muted sub">邀请码可能已过期、被撤销或已被他人使用。可以请机构所有者重新生成一个。</view>
+</view>
+
+<block wx:elif="{{result}}">
+  <view class="result">
+    <view class="icon">✓</view>
+    <view class="result-title">已加入</view>
+    <view class="muted">你已作为「{{result.roleLabel}}」加入「{{result.organization.name}}」</view>
+  </view>
+  <view class="footer">
+    <view class="btn" bindtap="onGoWorkbench">进入机构工作台</view>
+  </view>
+</block>
+
+<block wx:elif="{{preview}}">
+  <view class="card">
+    <view class="section-title">{{preview.organization.name}} 邀请你加入</view>
+    <view class="muted">
+      确认后你将成为该机构的「{{preview.invite.roleLabel}}」，可以：{{preview.invite.roleDescription}}。
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="kv"><text class="muted">机构</text><text>{{preview.organization.name}}</text></view>
+    <view class="kv"><text class="muted">授予角色</text><text>{{preview.invite.roleLabel}}</text></view>
+    <view class="kv"><text class="muted">有效期至</text><text>{{preview.invite.expiresAt}}</text></view>
+  </view>
+
+  <view class="notice">
+    加入后你可以查看该机构的报名记录。是否能看到机构资料和项目，取决于授予的角色。
+  </view>
+
+  <view class="footer">
+    <view class="btn {{accepting ? 'btn-disabled' : ''}}" bindtap="onAccept">{{accepting ? '处理中…' : '确认加入'}}</view>
+  </view>
+</block>

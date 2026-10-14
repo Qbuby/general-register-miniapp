@@ -1,0 +1,44 @@
+<view class="card">
+  <view class="section-title">邀请成员加入{{orgName ? '「' + orgName + '」' : ''}}</view>
+  <view class="muted">
+    微信无法直接获取对方的账号，所以需要你生成一个邀请码发给对方，
+    对方在小程序里点开并确认后即成为成员。
+  </view>
+</view>
+
+<view wx:if="{{invite}}" class="card">
+  <view class="section-title">当前有效邀请码</view>
+  <view class="code">{{invite.code}}</view>
+  <view class="kv"><text class="muted">授予角色</text><text>{{invite.roleLabel}}</text></view>
+  <view class="kv"><text class="muted">过期时间</text><text>{{invite.expiresAt}}</text></view>
+  <view class="kv"><text class="muted">状态</text><text>{{invite.status === 'pending' ? '待接受' : invite.status}}</text></view>
+
+  <view class="btn btn-plain op-btn" bindtap="onCopyCode">复制邀请码</view>
+  <view class="btn btn-plain op-btn" bindtap="onCopyPath">复制邀请链接</view>
+  <view class="btn op-btn danger" bindtap="onRevoke">撤销该邀请码</view>
+
+  <view class="muted tip">
+    把邀请链接发给对方，对方点击即可加入；一个邀请码只能被接受一次。
+  </view>
+</view>
+
+<view wx:else class="card">
+  <view class="section-title">生成邀请码</view>
+
+  <view class="field">
+    <view class="label">授予角色</view>
+    <view
+      wx:for="{{roleOptions}}"
+      wx:key="value"
+      class="role {{roleIndex === index ? 'role-active' : ''}}"
+      data-index="{{index}}"
+      bindtap="onRoleChange"
+    >
+      <view class="role-name">{{item.label}}</view>
+      <view class="muted">{{item.desc}}</view>
+    </view>
+  </view>
+
+  <view class="btn {{creating ? 'btn-disabled' : ''}}" bindtap="onCreate">{{creating ? '生成中…' : '生成邀请码'}}</view>
+  <view class="muted tip">邀请码 7 天内有效，且不能授予「所有者」。</view>
+</view>

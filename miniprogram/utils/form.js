@@ -45,15 +45,27 @@ function validateField(field, value) {
       return (field.options || []).indexOf(String(value).trim()) === -1 ? field.label + '的选项无效' : '';
     case 'checkbox': {
       const list = Array.isArray(value) ? value : [value];
-      if ((field.options || []).indexOf(list[0]) === -1) return field.label + '包含无效选项';
+      // 必须与服务端一致地先去重再计数，否则「选了 3 项但其中一项重复提交」
+      // 会被误判成超限。
+      const cleaned = [];
+      list.forEach((item) => {
+        const text = String(item).trim();
+        if (cleaned.indexOf(text) === -1) cleaned.push(text);
+      });
+      const invalid = cleaned.filter((item) => (field.options || []).indexOf(item) === -1);
+      if (invalid.length > 0) return field.label + '包含无效选项';
       const min = field.minLength == null ? 0 : field.minLength;
       const max = field.maxLength == null ? field.options.length : field.maxLength;
-      if (list.length < min) return field.label + '至少选择 ' + min + ' 项';
-      if (list.length > max) return field.label + '最多选择 ' + max + ' 项';
+      if (cleaned.length < min) return field.label + '至少选择 ' + min + ' 项';
+      if (cleaned.length > max) return field.label + '最多选择 ' + max + ' 项';
       return '';
     }
-    case 'date':
-      return /^\d{4}-\d{2}-\d{2}$/.test(String(value).trim()) ? '' : field.label + '请使用 YYYY-MM-DD 格式';
+    case 'date': {
+      const str = String(value).trim();
+      // 除了格式，还要确认这个日期真实存在（2016-13-45 是格式对但不存在的日期）。
+      const valid = /^\d{4}-\d{2}-\d{2}$/.test(str) && !isNaN(Date.parse(str + 'T00:00:00Z'));
+      return valid ? '' : field.label + '请使用 YYYY-MM-DD 格式';
+    }
     default:
       return '';
   }

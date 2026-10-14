@@ -1,0 +1,53 @@
+.state {
+  padding: 80rpx 40rpx;
+  text-align: center;
+  color: #8a9099;
+}
+
+.state-error {
+  color: #d4380d;
+}
+
+.sub {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+}
+
+.result {
+  background: #fff;
+  padding: 70rpx 40rpx 50rpx;
+  text-align: center;
+}
+
+.icon {
+  width: 96rpx;
+  height: 96rpx;
+  line-height: 96rpx;
+  border-radius: 48rpx;
+  background: #1e8e4e;
+  color: #fff;
+  font-size: 52rpx;
+  margin: 0 auto 20rpx;
+}
+
+.result-title {
+  font-size: 38rpx;
+  font-weight: 600;
+  margin-bottom: 10rpx;
+}
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f1f3;
+  font-size: 26rpx;
+}
+
+.kv:last-child {
+  border-bottom: none;
+}
+
+.footer {
+  padding: 20rpx 24rpx 60rpx;
+}

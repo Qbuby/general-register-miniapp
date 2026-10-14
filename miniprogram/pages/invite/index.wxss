@@ -1,0 +1,62 @@
+.field {
+  margin-bottom: 24rpx;
+}
+
+.label {
+  font-size: 26rpx;
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.role {
+  border: 1rpx solid #e3e6ea;
+  border-radius: 10rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  background: #fff;
+}
+
+.role-active {
+  border-color: #2b62d9;
+  background: #f2f6ff;
+}
+
+.role-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 6rpx;
+}
+
+.code {
+  font-size: 40rpx;
+  font-weight: 600;
+  letter-spacing: 4rpx;
+  color: #2b62d9;
+  text-align: center;
+  padding: 20rpx 0;
+  background: #f7f9fc;
+  border-radius: 10rpx;
+  margin-bottom: 16rpx;
+}
+
+.kv {
+  display: flex;
+  justify-content: space-between;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid #f0f1f3;
+  font-size: 26rpx;
+}
+
+.op-btn {
+  margin-top: 16rpx;
+}
+
+.danger {
+  color: #d4380d;
+  border-color: #f0c0bb;
+}
+
+.tip {
+  margin-top: 20rpx;
+  text-align: center;
+}

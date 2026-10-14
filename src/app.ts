@@ -23,6 +23,28 @@ export function buildApp(options: BuildOptions = {}) {
 
   app.addHook('onRequest', attachUser);
 
+  /**
+   * 允许空 JSON body。
+   *
+   * Fastify 默认会对「声明了 content-type: application/json 但没有 body」的
+   * 请求直接报错，但本服务里有些接口（接受邀请、标记报名状态）本来就不需要
+   * 请求体。不做这个处理，不同客户端的调用方式差异就会变成莫名其妙的 400。
+   */
+  app.addContentTypeParser('application/json', { parseAs: 'string' }, (_request, body, done) => {
+    const text = typeof body === 'string' ? body.trim() : '';
+    if (text === '') {
+      done(null, {});
+      return;
+    }
+    try {
+      done(null, JSON.parse(text));
+    } catch (error) {
+      const err = error as Error & { statusCode?: number };
+      err.statusCode = 400;
+      done(err, undefined);
+    }
+  });
+
   app.setNotFoundHandler(async (request, reply) => {
     if (request.url.startsWith('/api/')) {
       reply.code(404).send({ error: { code: 'not_found', message: '接口不存在' } });

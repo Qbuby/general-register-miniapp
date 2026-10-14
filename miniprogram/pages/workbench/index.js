@@ -77,6 +77,10 @@ Page({
     wx.navigateTo({ url: `/pages/qrcode/index?orgId=${this.data.orgId}` });
   },
 
+  onManageMembers() {
+    wx.navigateTo({ url: `/pages/members/index?orgId=${this.data.orgId}` });
+  },
+
   onProjectQr(e) {
     const { id, title } = e.currentTarget.dataset;
     wx.navigateTo({ url: `/pages/qrcode/index?orgId=${this.data.orgId}&projectId=${id}&title=${encodeURIComponent(title || '')}` });

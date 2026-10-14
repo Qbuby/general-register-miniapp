@@ -1,0 +1,59 @@
+.state {
+  padding: 80rpx 40rpx;
+  text-align: center;
+  color: #8a9099;
+}
+
+.state-error {
+  color: #d4380d;
+}
+
+.state-btn {
+  margin-top: 24rpx;
+  display: inline-block;
+  padding: 16rpx 40rpx;
+}
+
+.member-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.member-name {
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.me {
+  font-size: 24rpx;
+  color: #8a9099;
+  font-weight: 400;
+}
+
+.member-actions {
+  display: flex;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid #f0f1f3;
+}
+
+.action {
+  color: #2b62d9;
+  font-size: 26rpx;
+  margin-right: 32rpx;
+  padding: 4rpx 0;
+}
+
+.action-danger {
+  color: #d4380d;
+}
+
+.footer {
+  padding: 20rpx 24rpx 60rpx;
+}
+
+.tip {
+  margin-top: 16rpx;
+  text-align: center;
+}
